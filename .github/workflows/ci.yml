@@ -1,0 +1,45 @@
+name: CI/CD - Livro de Receitas
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+
+jobs:
+  build-test-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fazer checkout do código
+        uses: actions/checkout@v4
+
+      - name: Instalar verificadores (linters)
+        run: |
+          npm install -g htmlhint stylelint stylelint-config-standard
+
+      - name: Verificar HTML
+        run: htmlhint "**/*.html"
+
+      - name: Verificar CSS
+        run: stylelint "**/*.css"
+
+      - name: Verificar se imagens existem
+        run: |
+          missing=0
+          for f in $(git ls-files '*.html'); do
+            while IFS= read -r img; do
+              path=$(echo "$img" | sed -E 's/src="([^"]+)".*/\1/')
+              echo "$path" | grep -qiE '\.(png|jpe?g|gif|webp|svg)$' || continue
+              if [ ! -f "$path" ]; then
+                alt=$(echo "$path" | sed 's#^\.\./##')
+                [ -f "$alt" ] || { echo "::error ::Imagem não encontrada: $path (em $f)"; missing=1; }
+              fi
+            done < <(grep -hoE 'src="[^"]+"' "$f")
+          done
+          exit $missing
+
+      - name: Fazer deploy para GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        if: github.ref == 'refs/heads/main'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: .
