@@ -1,0 +1,170 @@
+/* Estilos para o cabeçalho */
+header {
+    text-align: center;
+}
+
+header h1 {
+    font-size: 2em;
+    margin: 0.5em 0; 
+}
+
+h3{
+    margin: 15px;
+    margin-left: 15%;
+}
+
+/* Estilos para a barra de navegação */
+nav {
+    background-color: #f8f8f8;
+    padding: 1em;
+}
+
+.nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-menu {
+    display: flex;
+    flex-grow: 1;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 1em; 
+}
+
+nav a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+}
+
+/* Estilos para o campo de pesquisa */
+.search-container {
+    display: flex;
+    align-items: center;
+}
+
+.search-container input[type="text"] {
+    padding: 0.5em;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 4px 0 0 4px;
+}
+
+.search-container button {
+    padding: 0.5em 1em;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-left: none;
+    border-radius: 0 4px 4px 0;
+    color: #fff;
+    cursor: pointer;
+    background-color: #333;
+}
+
+.search-container button:hover {
+    background-color: #555;
+}
+
+/* Esconde os links de navegação do teclado, mas os mantém visíveis para leitores de tela */
+.nav-menu a {
+    position: absolute;
+    left: -9999px;
+}
+
+/* Exibe os links de navegação ao receber o foco do teclado */
+.nav-menu a:focus {
+    position: static;
+}
+
+.food_img div{
+    margin:5px 20px
+}
+
+.food_img div header a img {
+    width: 90%;
+    height: auto;
+}
+
+.food_img div a{
+    margin-bottom: 30px;
+    color:black
+}
+
+.sec_img img{
+    width: 100%;
+    height: auto;
+}
+
+.title {
+    text-align: center;
+}
+
+/* Estilos para o rodapé */
+footer{
+    background-color: #333;
+}
+
+.footer-container {
+    display: flex;
+    justify-content: space-around;
+    background-color: #333;
+    color: white;
+    padding: 20px;
+}
+
+.footer-section {
+    flex: 1;
+    margin: 0 10px;
+}
+
+.footer-section h4 {
+    margin-bottom: 10px;
+    border-bottom: 2px solid #555;
+    padding-bottom: 5px;
+}
+
+.footer-section p, .footer-section ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.footer-section ul li {
+    margin-bottom: 5px;
+}
+
+.footer-section ul li a {
+    color: white;
+    text-decoration: none;
+}
+
+.footer-section ul li a:hover {
+    text-decoration: underline;
+}
+
+.social-icons {
+    display: flex;
+    gap: 10px;
+}
+
+.social-icons img {
+    width: 24px;
+    height: 24px;
+}
+
+/* Acessibilidade */
+
+
+.footer-bottom {
+    background-color: #222;
+    color: #ccc;
+    text-align: center;
+    padding: 10px 0;
+}
