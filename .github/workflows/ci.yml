@@ -5,17 +5,25 @@ on:
     branches: [ "main" ]
   pull_request:
 
-# 👇 dá permissão de escrita ao workflow
+# Permissão de escrita para publicar no Pages (branch gh-pages)
 permissions:
   contents: write
 
 jobs:
   build-test-deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Fazer checkout do código
         uses: actions/checkout@v4
 
+      # --- DEBUG útil quando algo falha ---
+      - name: Debug – listar ficheiros na raiz
+        run: |
+          pwd
+          ls -la
+
+      # --- LINTERS / QUALIDADE ---
       - name: Instalar verificadores (linters)
         run: |
           npm install -g htmlhint stylelint stylelint-config-standard
@@ -23,25 +31,44 @@ jobs:
       - name: Verificar HTML
         run: htmlhint "**/*.html"
 
-      - name: Verificar CSS
-        run: stylelint "**/*.css"
+      - name: Verificar CSS (usa config explícita)
+        run: |
+          test -f .stylelintrc.json && echo "✅ .stylelintrc.json encontrado" || (echo "❌ Config não encontrada na raiz"; exit 78)
+          stylelint "**/*.css" --config .stylelintrc.json --formatter compact
 
-      - name: Verificar se imagens existem
+      - name: Verificar se imagens referenciadas existem
         run: |
           missing=0
           for f in $(git ls-files '*.html'); do
             while IFS= read -r img; do
               path=$(echo "$img" | sed -E 's/src="([^"]+)".*/\1/')
               echo "$path" | grep -qiE '\.(png|jpe?g|gif|webp|svg)$' || continue
+              # tenta caminho tal como está
               if [ ! -f "$path" ]; then
+                # tenta remover ../ (páginas dentro de subpastas)
                 alt=$(echo "$path" | sed 's#^\.\./##')
-                [ -f "$alt" ] || { echo "::error ::Imagem não encontrada: $path (em $f)"; missing=1; }
+                if [ ! -f "$alt" ]; then
+                  echo "::error ::Imagem não encontrada: $path (referenciada em $f)"
+                  missing=1
+                fi
               fi
             done < <(grep -hoE 'src="[^"]+"' "$f")
           done
           exit $missing
 
-      # 🚀 Deploy para a branch gh-pages
+      # --- (OPCIONAL) Otimização de imagens ---
+      # - name: Otimizar imagens (lossless)
+      #   run: |
+      #     npm i -g imagemin-cli imagemin-mozjpeg imagemin-pngquant imagemin-svgo
+      #     imagemin imagens/* --plugin=pngquant --plugin=mozjpeg --plugin=svgo > /dev/null || true
+
+      # --- (OPCIONAL) ZAP baseline quando tiveres o URL público ---
+      # - name: OWASP ZAP baseline
+      #   uses: zaproxy/action-baseline@v0.8.0
+      #   with:
+      #     target: 'https://<teu-username>.github.io/<teu-repo>/'
+
+      # --- DEPLOY para GitHub Pages (branch gh-pages) ---
       - name: Fazer deploy para GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
