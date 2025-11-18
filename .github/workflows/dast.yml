@@ -1,9 +1,9 @@
 name: OWASP ZAP DAST Scan
 
 on:
-  workflow_dispatch:          # permite correr manualmente em Actions → Run workflow
+  workflow_dispatch:          # correr manualmente em Actions → Run workflow
   schedule:
-    - cron: "0 0 * * 0"       # opcional: corre automaticamente 1x por semana (domingo)
+    - cron: "0 0 * * 0"       # opcional: 1x por semana (domingo, 00:00 UTC)
 
 jobs:
   zap_scan:
@@ -14,5 +14,5 @@ jobs:
         uses: zaproxy/action-full-scan@v0.13.0
         with:
           target: 'https://weiitt.github.io/livro-de-receitas-xops/'
-          allow_issue_writing: false   # não cria issues automáticas no repositório
-          cmd_options: ''              # podes deixar vazio ou adicionar flags extra
+          allow_issue_writing: false
+          cmd_options: ''
