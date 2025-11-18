@@ -18,4 +18,3 @@ jobs:
         with:
           target: 'https://weiitt.github.io/livro-de-receitas-xops/'
           allow_issue_writing: false   # stops ZAP from creating GitHub issues
-          cmd_options: ""              # extra ZAP flags if you need them
