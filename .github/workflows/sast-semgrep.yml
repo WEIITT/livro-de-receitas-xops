@@ -9,24 +9,27 @@ on:
 jobs:
   semgrep:
     runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: read
+      actions: read
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Corre Semgrep em modo SAST com regras OWASP/JS/HTML
-      - name: Run Semgrep SAST
-        uses: semgrep/semgrep-action@v1
-        with:
-          config: >
-            p/owasp-top-ten
-            p/javascript
-            p/html5
-          generateSarif: true
-          output: semgrep.sarif
+      - name: Install Semgrep
+        run: pip install semgrep
 
-      # Envia o relatório para "Code scanning alerts"
+      - name: Run Semgrep SAST
+        run: |
+          semgrep scan \
+            --config p/owasp-top-ten \
+            --config p/javascript \
+            --config p/html5 \
+            --sarif -o semgrep.sarif
+
       - name: Upload SARIF to GitHub
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: semgrep.sarif
