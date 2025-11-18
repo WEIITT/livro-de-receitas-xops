@@ -1,0 +1,21 @@
+name: OWASP ZAP DAST Scan
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * 0"  # runs weekly; you can remove if not needed
+
+jobs:
+  zap_scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: ZAP Full Scan
+        uses: zaproxy/action-full-scan@v0.13.0
+        with:
+          target: 'https://weiitt.github.io/livro-de-receitas-xops/'
+          allow_issue_writing: false   # stops ZAP from creating GitHub issues
+          cmd_options: ""              # extra ZAP flags if you need them
