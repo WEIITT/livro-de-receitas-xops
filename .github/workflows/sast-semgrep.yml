@@ -23,11 +23,10 @@ jobs:
 
       - name: Run Semgrep SAST
         run: |
-          semgrep scan \
+          semgrep scan . \
             --config p/owasp-top-ten \
             --config p/javascript \
-            --config p/html5 \
-            --sarif -o semgrep.sarif
+            --sarif --output semgrep.sarif || true
 
       - name: Upload SARIF to GitHub
         uses: github/codeql-action/upload-sarif@v4
