@@ -1,0 +1,32 @@
+name: SAST - Semgrep
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  semgrep:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Corre Semgrep em modo SAST com regras OWASP/JS/HTML
+      - name: Run Semgrep SAST
+        uses: semgrep/semgrep-action@v1
+        with:
+          config: >
+            p/owasp-top-ten
+            p/javascript
+            p/html5
+          generateSarif: true
+          output: semgrep.sarif
+
+      # Envia o relatório para "Code scanning alerts"
+      - name: Upload SARIF to GitHub
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: semgrep.sarif
