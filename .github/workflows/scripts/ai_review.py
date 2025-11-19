@@ -2,23 +2,12 @@ import subprocess
 import json
 from openai import OpenAI
 import sys
-import re
-import os
 
 client = OpenAI()
 
-# === OBTÉM O DIFF CORRECTO ENTRE O PR E A MAIN ===
-try:
-    diff = subprocess.check_output(["git", "diff", "origin/main..."], text=True)
-except:
-    print("❗ Não foi possível obter o diff. A correr fallback.")
-    diff = subprocess.check_output(["git", "diff"], text=True)
+# obter o diff do pull request
+diff = subprocess.check_output(["git", "diff", "HEAD^", "HEAD"]).decode()
 
-if not diff.strip():
-    print("Nenhuma alteração encontrada — aprovação automática.")
-    sys.exit(0)
-
-# === PROMPT PARA A IA ===
 prompt = f"""
 És um Code Reviewer especializado em segurança, clean code e DevSecOps.
 
@@ -26,14 +15,14 @@ Analisa estas alterações ao código:
 
 {diff}
 
-Responde APENAS em JSON no formato:
+Responde apenas em JSON com o formato:
 
 {{
   "status": "ok" | "fail",
-  "issues": ["lista de problemas"]
+  "issues": ["lista de problemas encontrados"]
 }}
 
-A pipeline deve reprovar se encontrares vulnerabilidades, más práticas,
+A pipeline deve reprovar se encontrares vulnerabilidades, más práticas, 
 ou código inseguro.
 """
 
@@ -42,24 +31,17 @@ response = client.chat.completions.create(
     messages=[{"role": "user", "content": prompt}]
 )
 
-raw_output = response.choices[0].message["content"]
+result = json.loads(response.choices[0].message.content)
 
-# === EXTRAIR JSON MESMO QUE VENHA TEXTO JUNTO ===
-json_str = re.search(r"\{[\s\S]*\}", raw_output).group(0)
-result = json.loads(json_str)
-
-# === OUTPUT BONITO NO LOG DO GITHUB ACTIONS ===
+# Output bonito
 print("\n========= IA CODE REVIEW =========")
-if result["issues"]:
-    for issue in result["issues"]:
-        print(" -", issue)
-else:
-    print("Nenhum problema encontrado.")
+for issue in result["issues"]:
+    print(" -", issue)
 print("==================================\n")
 
-# === BLOQUEAR MERGE SE NECESSÁRIO ===
-if result["status"].lower() == "fail":
-    print("❌ AI detetou problemas — merge bloqueado.")
+# Fail pipeline if necessary
+if result["status"] == "fail":
+    print("❌ AI Detected problems — blocking merge.")
     sys.exit(1)
 
-print("✔ AI Review Passed — sem problemas críticos.")
+print("✔ AI Review Passed — no critical issues detected.")
