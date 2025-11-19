@@ -1,3 +1,3 @@
 // test SAST
 let dado = "ola";
-eval(dado);
+eval(dadoqqqqqqqqqqqqq);
