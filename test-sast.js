@@ -1,3 +1,7 @@
-// Teste SAST - vulnerabilidade intencional
-const dados = "teste";
-eval("console.log('SAST a funcionar: ' + dados)");
+// Teste intencional para SAST
+function processarInput(userInput) {
+    // VULNERABILIDADE: uso de eval()
+    eval(userInput);
+}
+
+processarInput("console.log('Olá!')");
