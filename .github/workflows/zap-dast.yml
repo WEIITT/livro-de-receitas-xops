@@ -1,0 +1,18 @@
+name: OWASP ZAP DAST Scan
+
+on:
+  workflow_dispatch:          # Permite correr manualmente
+  schedule:
+    - cron: "0 0 * * 0"       # Opcional: corre todos os domingos à meia-noite UTC
+
+jobs:
+  zap_scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ZAP Full Scan
+        uses: zaproxy/action-full-scan@v0.13.0
+        with:
+          target: "https://weiitt.github.io/livro-de-receitas-xops/"
+          allow_issue_writing: false
+          cmd_options: ""
