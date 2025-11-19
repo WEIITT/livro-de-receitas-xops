@@ -1,7 +1,7 @@
 /* Estilos para o cabeçalho */
 header {
     text-align: center;
-
+}
 
 header h1 {
     font-size: 2em;
@@ -168,6 +168,7 @@ footer{
     text-align: center;
     padding: 10px 0;
 }
+
 
 
 
