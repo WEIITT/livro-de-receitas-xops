@@ -1,0 +1,10 @@
+{
+  "extends": ["stylelint-config-standard"],
+  "ignoreFiles": ["**/*.min.css", "**/vendor/**", "**/node_modules/**"],
+  "rules": {
+    "no-empty-source": null,
+    "font-family-no-missing-generic-family-keyword": null,
+    "selector-class-pattern": null,
+    "no-descending-specificity": null
+  }
+}
