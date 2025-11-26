@@ -1,11 +1,14 @@
 name: AI Code Review
 
 on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ main ]
 
 jobs:
-  ai-review:
+  ai_review:
     runs-on: ubuntu-latest
 
     steps:
@@ -25,4 +28,4 @@ jobs:
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
-          python scripts/ai_review.py
+          python .github/workflows/scripts/ai_review.py

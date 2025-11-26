@@ -1,9 +1,10 @@
 name: OWASP ZAP DAST Scan
 
 on:
-  workflow_dispatch:          # Permite correr manualmente
-  schedule:
-    - cron: "0 0 * * 0"       # Opcional: corre todos os domingos à meia-noite UTC
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]      
 
 jobs:
   zap_scan:
